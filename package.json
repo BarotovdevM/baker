@@ -1,0 +1,12 @@
+{
+  "name": "bakeri",
+  "version": "1.0.0",
+  "description": "Bakery website",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.1"
+  }
+}

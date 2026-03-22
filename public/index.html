@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Пекарня ERP</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ─── Sidebar ──────────────────────────────────────────── -->
+<aside id="sidebar">
+  <div id="sidebar-header">
+    <h1>🍞 Пекарня</h1>
+    <p>Система управления</p>
+  </div>
+  <nav>
+    <div class="nav-item" data-section="add-ingredient">
+      <span class="icon">➕</span> Добавить ингредиент
+    </div>
+    <div class="nav-item" data-section="del-ingredient">
+      <span class="icon">🗑️</span> Удалить ингредиент
+    </div>
+    <div class="nav-item active" data-section="warehouse">
+      <span class="icon">📦</span> Показать склад
+    </div>
+    <div class="nav-item" data-section="production">
+      <span class="icon">⚙️</span> Рассчитать производство
+    </div>
+    <div class="nav-item" data-section="history">
+      <span class="icon">📋</span> История продаж
+    </div>
+    <div class="nav-item" data-section="del-history">
+      <span class="icon">❌</span> Удалить запись
+    </div>
+    <div class="nav-item" data-section="stats">
+      <span class="icon">📊</span> Статистика
+    </div>
+    <div class="nav-item" data-section="losses">
+      <span class="icon">⚠️</span> Списать убытки
+    </div>
+  </nav>
+</aside>
+
+<!-- ─── Main ─────────────────────────────────────────────── -->
+<div id="main">
+  <div id="topbar">
+    <h2 id="page-title">Склад ингредиентов</h2>
+    <span id="topbar-date" style="font-size:0.85rem;color:#7d5a4f;"></span>
+  </div>
+  <div id="content"></div>
+</div>
+
+<!-- ─── Modal ────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-danger" id="modal-confirm">Подтвердить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Toast ─────────────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -2,9 +2,9 @@
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let currentSection = 'warehouse';
-let inventory = [];
-let history   = [];
-let calcData  = null; // last successful check result
+let inventory   = [];
+let salesHistory = [];
+let calcData    = null; // last successful check result
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,10 +52,17 @@ function navigate(section) {
 
 // ─── API helpers ──────────────────────────────────────────────────────────────
 async function api(method, url, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (body) opts.body = JSON.stringify(body);
-  const r = await fetch(url, opts);
-  return r.json();
+  try {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+    const r = await fetch(url, opts);
+    const data = await r.json();
+    if (!r.ok && !data.error) data.error = `Ошибка сервера (${r.status})`;
+    return data;
+  } catch (e) {
+    toast('❌ Ошибка соединения с сервером');
+    return { error: e.message };
+  }
 }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
@@ -394,12 +401,12 @@ async function saveProduction() {
 // ─── 5. History ───────────────────────────────────────────────────────────────
 async function renderHistory() {
   const data = await api('GET', '/api/history');
-  history = data;
+  salesHistory = data;
   document.getElementById('content').innerHTML = `
     <div class="card">
       <div class="section-header">
         <div class="card-title" style="margin:0;border:none;padding:0;">История продаж</div>
-        <span style="font-size:0.85rem;color:#999;">${history.length} записей</span>
+        <span style="font-size:0.85rem;color:#999;">${salesHistory.length} записей</span>
       </div>
       <div class="table-wrap" style="margin-top:1rem;">
         <table>
@@ -418,7 +425,7 @@ async function renderHistory() {
             </tr>
           </thead>
           <tbody>
-            ${history.map(r => `
+            ${salesHistory.map(r => `
               <tr>
                 <td style="white-space:nowrap;">${fmtDate(r.date)}</td>
                 <td>${r.produced}</td>
@@ -480,7 +487,7 @@ function openLossModal(id, produced, sold, currentLosses) {
 // ─── 6. Delete history (dedicated section) ───────────────────────────────────
 async function renderDelHistory() {
   const data = await api('GET', '/api/history');
-  history = data;
+  salesHistory = data;
   document.getElementById('content').innerHTML = `
     <div class="card">
       <div class="card-title">❌ Удалить запись из истории</div>
@@ -500,7 +507,7 @@ async function renderDelHistory() {
             </tr>
           </thead>
           <tbody>
-            ${history.map(r => `
+            ${salesHistory.map(r => `
               <tr>
                 <td style="white-space:nowrap;">${fmtDate(r.date)}</td>
                 <td>${r.produced}</td>
@@ -519,10 +526,10 @@ async function renderDelHistory() {
 // ─── 7. Losses (dedicated section) ───────────────────────────────────────────
 async function renderLosses() {
   const data = await api('GET', '/api/history');
-  history = data;
+  salesHistory = data;
 
   // Only show records that still have unsold/unlost bread
-  const eligible = history.filter(r => r.sold + r.losses < r.produced);
+  const eligible = salesHistory.filter(r => r.sold + r.losses < r.produced);
 
   document.getElementById('content').innerHTML = `
     <div class="card">
